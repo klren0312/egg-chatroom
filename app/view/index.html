@@ -63,6 +63,7 @@
     <div class="main" id="js-main">
       <div class="list">
         <div id="system-msg"></div>
+        <span id="js-peonum" style="z-index: 1000;color:#fff;"></span>
         <ul id="js-list">
           
         </ul>
@@ -86,6 +87,7 @@
     const username = document.getElementById('js-username')
     const sendBtn = document.getElementById('js-send-btn')
     const setBtn = document.getElementById('js-set-btn')
+    const peoNum = document.getElementById('js-peonum')
     setBtn.onclick = function() {
       if(connected&&username.value.length !== 0) {
         socket.emit('add user', {
@@ -103,7 +105,12 @@
       }
     }
     // socket 操作
-    const socket = io('http://localhost:7001/')
+    const socket = io('http://localhost:7001/', {
+      query: {
+        room: 'demo',
+        userId: `client_${Math.random()}`,
+      },
+    })
     let connected = false
     socket.on('connect', () => {
       connected = true
@@ -128,7 +135,8 @@
         console.log(ul)
       })
       socket.on('all user', msg => {
-        console.log(msg.usernum)
+        // console.log(msg.usernum)
+        peoNum.innerHTML  = msg.usernum
       })
       socket.on('disconnect', msg => {
         main.className = ''
