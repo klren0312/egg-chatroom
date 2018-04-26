@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    .container {
+      padding: 20px;
+    }
+    #system-msg {
+      background: #000;
+      color: #fff;
+      text-align: center;
+    }
+    .main {
+      display: none;
+    }
+    .active {
+      display: block;
+    }
+    .hidden {
+      display: none;
+    }
+    .list {
+      height: 500px;
+      overflow-y: auto;
+    }
+    .list ul{
+      display: flex;
+      flex-direction: column;
+      margin: 0;
+      padding: 0;
+    }
+    .list ul li {
+      list-style-type: none;
+      border-bottom: 1px solid #d4d4d4;
+      font-size: 1.5rem;
+    }
+    .input {
+      display: flex;
+      flex-direction: row;
+    }
+    .input input{
+      flex: 2;
+    }
+    .input button {
+      flex: 1;
+    }
+
+    .user-name {
+      color: aqua;
+    }
+  </style>
+</head>
+<body> 
+  <div id="container">
+    <div id="js-user-input" class="input">
+        <input type="text" id="js-username" placeholder="输入您的用户名">
+        <button id="js-set-btn">设置</button>
+    </div>
+    <div class="main" id="js-main">
+      <div class="list">
+        <div id="system-msg"></div>
+        <ul id="js-list">
+          
+        </ul>
+      </div>
+      <div class="input">
+        <input type="text" id="js-msg" placeholder="输入您的信息">
+        <button id="js-send-btn">send</button>
+      </div>
+    </div>
+    
+    
+  </div>
+  <script src="https://cdn.bootcss.com/socket.io/2.1.0/socket.io.js"></script>
+  <script>
+    // dom 操作
+    const container = document.getElementById('container')
+    const systemMsg = document.getElementById('system-msg')
+    const ul = document.getElementById('js-list')
+    const main = document.getElementById('js-main')
+    const msg = document.getElementById('js-msg')
+    const username = document.getElementById('js-username')
+    const sendBtn = document.getElementById('js-send-btn')
+    const setBtn = document.getElementById('js-set-btn')
+    setBtn.onclick = function() {
+      if(connected&&username.value.length !== 0) {
+        socket.emit('add user', {
+          username: username.value
+        })
+        main.className = "active"
+        setBtn.disabled = true
+      }
+    }
+    sendBtn.onclick = function(){
+      if(connected&&msg.value.length !== 0) {
+        socket.emit('new message', {
+          message: msg.value
+        })
+      }
+    }
+    // socket 操作
+    const socket = io('http://localhost:7001/')
+    let connected = false
+    socket.on('connect', () => {
+      connected = true
+      // 救命心跳
+      setInterval(function(){
+        socket.emit('keep', 'keep')
+      },5000)
+
+      //监听
+      socket.on('res', msg => {
+        console.log(msg)
+      })
+      socket.on('online', msg => {
+        systemMsg.innerHTML = `系统通知: ${msg}`
+        console.log(`System: ${msg}`)
+      })
+      socket.on('new message', msg => {
+        const {data,user} = msg
+        let l = document.createElement('li')
+        l.innerHTML = `<span class="user-name">${user}</span>:${data.message}——————${new Date().toLocaleString()}`
+        ul.appendChild(l)
+        console.log(ul)
+      })
+      socket.on('all user', msg => {
+        console.log(msg.usernum)
+      })
+      socket.on('disconnect', msg => {
+        main.className = ''
+        setBtn.disabled = false
+      });
+    })
+
+      
+  </script>
+</body>
+</html>
