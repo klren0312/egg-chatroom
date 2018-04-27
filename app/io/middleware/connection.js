@@ -13,6 +13,7 @@ module.exports = app => {
     if (oldData) {
       ctx.socket.emit('old message', oldData)
     }
+    // 将用户信息存入缓存便于controller调用
     ctx.service.user.setUser(uid, username)
     ctx.socket.join(roomId, () => {
       app.io.to(roomId).emit('online',`欢迎新人加入:${username}`)
@@ -28,6 +29,8 @@ module.exports = app => {
     app.io.emit('all user', {
       usernum: usernum
     })
+    // 用户退出清除用户信息的缓存
+    ctx.service.user.delUser(uid)
     ctx.socket.leave(roomId,() => {
       app.io.to(roomId).emit('online',`欢迎新人退出:${username}`)
     })

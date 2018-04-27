@@ -23,6 +23,10 @@ class UserService extends Service {
     const {ctx,app} = this
     return await app.redis.get(uid)
   }
+  async delUser(uid) {
+    const {ctx,app} = this
+    return await app.redis.del(uid)
+  }
 }
 
 module.exports = UserService;
