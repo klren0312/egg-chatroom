@@ -75,6 +75,7 @@
       <div class="input">
         <input type="text" id="js-msg" placeholder="输入您的信息">
         <button id="js-send-btn">send</button>
+        <button id="js-clear">clear</button>
       </div>
     </div>
     
@@ -92,6 +93,7 @@
     const sendBtn = document.getElementById('js-send-btn')
     const room1 = document.getElementById('js-room1')
     const room2 = document.getElementById('js-room2')
+    const clearBtn = document.getElementById('js-clear')
     const peoNum = document.getElementById('js-peonum')
     let connected = false //判断是否连接
     room1.onclick = async function() {
@@ -107,6 +109,9 @@
       main.className = "active"
       room2.disabled = true
       await join(this.dataset.room)
+    }
+    clearBtn.onclick = function() {
+      ul.innerHTML = ''
     }
   
     const join =async (roomId) => {
