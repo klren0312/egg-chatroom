@@ -96,6 +96,7 @@
     const clearBtn = document.getElementById('js-clear')
     const peoNum = document.getElementById('js-peonum')
     let connected = false //判断是否连接
+    // 房间1 点击事件
     room1.onclick = async function() {
       await localStorage.setItem('username',username.value)
       // await console.log(this.dataset.room)
@@ -103,6 +104,7 @@
       room1.disabled = true
       await join(this.dataset.room)
     }
+    //房间2 点击事件
     room2.onclick = async function() {
       await localStorage.setItem('username',username.value)
       // await console.log(this.dataset.room)
@@ -113,7 +115,7 @@
     clearBtn.onclick = function() {
       ul.innerHTML = ''
     }
-  
+    // 加入房间函数
     const join =async (roomId) => {
       const socket = io('http://localhost:7001/',{
         query:{// socket 操作 坑啊 query里面值要双引号。。。
@@ -162,6 +164,7 @@
           room1.disabled = false
           room2.disabled = false
         });
+        // 发送按钮点击事件
         sendBtn.onclick = function(){
           if(connected&&msg.value.length !== 0) {
             socket.emit('new message', {

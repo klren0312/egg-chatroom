@@ -13,15 +13,19 @@ class NspController extends Controller {
     //FIXME: await ctx.service.message.store(roomId, username, message, date)
     let data = []
     let oldData = await ctx.service.message.get(roomId)
+    // 判断是否有旧数据，有则解析赋值给data
     if(oldData!==null){
       data = JSON.parse(oldData)
     }
+    // 将数据赋值给data
     data.push({
       user: username,
       data: message,
       date: date
     })
+    // 将新数据推到redis
     await app.redis.set(roomId, JSON.stringify(data))
+    // 将新数据推送给房间的所有人
     app.io.to(roomId).emit('new message', {
       data: message,
       user: username
