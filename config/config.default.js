@@ -33,5 +33,11 @@ module.exports = appInfo => {
       port: 6379,
     }
   }
+  // csrf
+  config.security = {
+    csrf: {
+      enable: false
+    }
+  }
   return config;
 };

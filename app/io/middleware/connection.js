@@ -2,18 +2,36 @@
 let usernum = 0
 module.exports = app => {
   return async (ctx, next) => {
-    await ctx.socket.join('room'+ctx.socket.id)
-    console.log(ctx.socket.request.headers)
+    // 建立连接
+    // 拿到房间号
+    let roomId = ctx.socket.handshake.query.room
+    let username = ctx.socket.handshake.query.username
+    let uid = ctx.socket.id
+    // 获取历史数据
+    let oldData = await ctx.service.message.get(roomId)
+    // console.log(oldData)
+    if (oldData) {
+      ctx.socket.emit('old message', oldData)
+    }
+    ctx.service.user.setUser(uid, username)
+    ctx.socket.join(roomId, () => {
+      app.io.to(roomId).emit('online',`欢迎新人加入:${username}`)
+    })
     ctx.socket.emit('res', 'connected!')
     ++usernum
     app.io.emit('all user', {
       usernum: usernum
     })
+    // 断开连接
     await next()
     --usernum
     app.io.emit('all user', {
       usernum: usernum
     })
+    ctx.socket.leave(roomId,() => {
+      app.io.to(roomId).emit('online',`欢迎新人退出:${username}`)
+    })
+
     console.log('disconnection!',new Date().toLocaleString(),`user:${ctx.socket.id}`)
   }
 }

@@ -9,6 +9,9 @@
     .container {
       padding: 20px;
     }
+    input {
+      width: 100%;
+    }
     #system-msg {
       background: #000;
       color: #fff;
@@ -57,8 +60,9 @@
 <body> 
   <div id="container">
     <div id="js-user-input" class="input">
-        <input type="text" id="js-username" placeholder="输入您的用户名">
-        <button id="js-set-btn">设置</button>
+      <input type="text" id="js-username"  placeholder="输入您的用户名">
+      <button id="js-room1" data-room="room1">加入房间1</button>
+      <button id="js-room2" data-room="room2">加入房间2</button>
     </div>
     <div class="main" id="js-main">
       <div class="list">
@@ -86,63 +90,83 @@
     const msg = document.getElementById('js-msg')
     const username = document.getElementById('js-username')
     const sendBtn = document.getElementById('js-send-btn')
-    const setBtn = document.getElementById('js-set-btn')
+    const room1 = document.getElementById('js-room1')
+    const room2 = document.getElementById('js-room2')
     const peoNum = document.getElementById('js-peonum')
-    setBtn.onclick = function() {
-      if(connected&&username.value.length !== 0) {
-        socket.emit('add user', {
-          username: username.value
-        })
-        main.className = "active"
-        setBtn.disabled = true
-      }
+    let connected = false //判断是否连接
+    room1.onclick = async function() {
+      await localStorage.setItem('username',username.value)
+      // await console.log(this.dataset.room)
+      main.className = "active"
+      room1.disabled = true
+      await join(this.dataset.room)
     }
-    sendBtn.onclick = function(){
-      if(connected&&msg.value.length !== 0) {
-        socket.emit('new message', {
-          message: msg.value
-        })
-      }
+    room2.onclick = async function() {
+      await localStorage.setItem('username',username.value)
+      // await console.log(this.dataset.room)
+      main.className = "active"
+      room2.disabled = true
+      await join(this.dataset.room)
     }
-    // socket 操作
-    const socket = io('http://localhost:7001/', {
-      query: {
-        room: 'demo',
-        userId: `client_${Math.random()}`,
-      },
-    })
-    let connected = false
-    socket.on('connect', () => {
-      connected = true
-      // 救命心跳
-      setInterval(function(){
-        socket.emit('keep', 'keep')
-      },5000)
+  
+    const join =async (roomId) => {
+      const socket = io('http://localhost:7001/',{
+        query:{// socket 操作 坑啊 query里面值要双引号。。。
+          room: roomId,
+          username: localStorage.getItem('username')
+        }
+      })
+      socket.on('connect', () => {
+        connected = true
+        // 救命心跳
+        setInterval(function(){
+          socket.emit('keep', 'keep')
+        },5000)
 
-      //监听
-      socket.on('res', msg => {
-        console.log(msg)
+        //监听
+        socket.on('res', msg => {
+          console.log(msg)
+        })
+        socket.on('online', msg => {
+          systemMsg.innerHTML = `系统通知: ${msg}`
+          console.log(`System: ${msg}`)
+        })
+        socket.on('old message', msg => {
+          
+          let oldData = JSON.parse(msg)
+          oldData.map((value, i) => {
+            console.log(value)
+            const {user, data, date} = value
+            let l = document.createElement('li')
+            l.innerHTML = `<span class="user-name">${user}</span>:${data.message}——————${date}`
+            ul.appendChild(l)
+          })
+        })
+        socket.on('new message', msg => {
+          const {data,user} = msg
+          let l = document.createElement('li')
+          l.innerHTML = `<span class="user-name">${user}</span>:${data.message}——————${new Date().toLocaleString()}`
+          ul.appendChild(l)
+        })
+        socket.on('all user', msg => {
+          // console.log(msg.usernum)
+          peoNum.innerHTML  = msg.usernum
+        })
+        socket.on('disconnect', msg => {
+          main.className = ''
+          room1.disabled = false
+          room2.disabled = false
+        });
+        sendBtn.onclick = function(){
+          if(connected&&msg.value.length !== 0) {
+            socket.emit('new message', {
+              message: msg.value
+            })
+          }
+        }
       })
-      socket.on('online', msg => {
-        systemMsg.innerHTML = `系统通知: ${msg}`
-        console.log(`System: ${msg}`)
-      })
-      socket.on('new message', msg => {
-        const {data,user} = msg
-        let l = document.createElement('li')
-        l.innerHTML = `<span class="user-name">${user}</span>:${data.message}——————${new Date().toLocaleString()}`
-        ul.appendChild(l)
-        console.log(ul)
-      })
-      socket.on('all user', msg => {
-        // console.log(msg.usernum)
-        peoNum.innerHTML  = msg.usernum
-      })
-      socket.on('disconnect', msg => {
-        main.className = ''
-        setBtn.disabled = false
-      });
-    })
+    }
+    
 
       
   </script>
