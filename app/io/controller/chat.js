@@ -23,8 +23,8 @@ class NspController extends Controller {
       data: message,
       date: date
     })
-    // 将新数据推到redis
-    await app.redis.set(roomId, JSON.stringify(data))
+    // 将新数据推到redis, EX参数用来设置销毁时间
+    await app.redis.set(roomId, JSON.stringify(data), 'EX', 10*60)
     // 将新数据推送给房间的所有人
     app.io.to(roomId).emit('new message', {
       data: message,
