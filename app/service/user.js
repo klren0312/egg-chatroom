@@ -23,6 +23,10 @@ class UserService extends Service {
     const {ctx,app} = this
     return await app.redis.get(uid)
   }
+  /**
+   * 通过socketid删除用户
+   * @param {*} uid 
+   */
   async delUser(uid) {
     const {ctx,app} = this
     return await app.redis.del(uid)
