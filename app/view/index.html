@@ -118,7 +118,7 @@
     // 加入房间函数
     const join =async (roomId) => {
       const socket = io('http://localhost:7001/',{
-        query:{// socket 操作 坑啊 query里面值要双引号。。。
+        query:{
           room: roomId,
           username: localStorage.getItem('username')
         }
@@ -139,13 +139,11 @@
           console.log(`System: ${msg}`)
         })
         socket.on('old message', msg => {
-          
-          let oldData = JSON.parse(msg)
-          oldData.map((value, i) => {
-            console.log(value)
-            const {user, data, date} = value
+          console.log(msg)
+          msg.map((v,i) => {
+            let value = JSON.parse(v)
             let l = document.createElement('li')
-            l.innerHTML = `<span class="user-name">${user}</span>:${data.message}——————${date}`
+            l.innerHTML = `<span class="user-name">${value.user}</span>:${value.data.message}——————${value.date}`
             ul.appendChild(l)
           })
         })
