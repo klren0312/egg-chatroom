@@ -99,7 +99,6 @@
     // 房间1 点击事件
     room1.onclick = async function() {
       await localStorage.setItem('username',username.value)
-      // await console.log(this.dataset.room)
       main.className = "active"
       room1.disabled = true
       await join(this.dataset.room)
@@ -107,7 +106,6 @@
     //房间2 点击事件
     room2.onclick = async function() {
       await localStorage.setItem('username',username.value)
-      // await console.log(this.dataset.room)
       main.className = "active"
       room2.disabled = true
       await join(this.dataset.room)
