@@ -15,12 +15,12 @@ module.exports = app => {
     if (oldData) {
       ctx.socket.emit('old message', oldData)
     }
-    // 断开连接
+    
     await next()
+    // 断开连接
     ctx.socket.leave(roomId,() => {
       app.io.to(roomId).emit('online',`欢迎新人退出:${username}`)
     })
-
     console.log('disconnection!',new Date().toLocaleString(),`user:${ctx.socket.id}`)
   }
 }

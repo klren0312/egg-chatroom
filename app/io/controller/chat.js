@@ -2,7 +2,7 @@
 
 const Controller = require('egg').Controller;
 
-class NspController extends Controller {
+class ChatController extends Controller {
   async message() {
     const {ctx, app} = this
     const message = ctx.args[0] || {}
@@ -23,4 +23,4 @@ class NspController extends Controller {
   }
 }
 
-module.exports = NspController;
+module.exports = ChatController;
