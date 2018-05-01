@@ -122,20 +122,9 @@
         }
       })
       socket.on('connect', () => {
-        connected = true
-        // 救命心跳
-        setInterval(function(){
-          socket.emit('keep', 'keep')
-        },5000)
-
-        //监听
-        socket.on('res', msg => {
-          console.log(msg)
-        })
-        socket.on('online', msg => {
-          systemMsg.innerHTML = `系统通知: ${msg}`
-          console.log(`System: ${msg}`)
-        })
+        // 请求历史信息
+        socket.emit('old message', 'need old')
+        // 获取历史信息
         socket.on('old message', msg => {
           console.log(msg)
           msg.map((v,i) => {
@@ -145,7 +134,25 @@
             ul.appendChild(l)
           })
         })
+        connected = true
+        // 救命心跳
+        // setInterval(function(){
+        //   socket.emit('keep', '0')
+        // },8000)
+
+        //监听
+        socket.on('res', msg => {
+          console.log(msg)
+        })
+        // 当前系统用户进入与退出的信息
+        socket.on('online', msg => {
+          systemMsg.innerHTML = `系统通知: ${msg}`
+          console.log(`System: ${msg}`)
+        })
+        
+        // 获取信息
         socket.on('new message', msg => {
+          console.log(msg)
           const {data,user} = msg
           let l = document.createElement('li')
           l.innerHTML = `<span class="user-name">${user}</span>:${data.message}——————${new Date().toLocaleString()}`
@@ -164,7 +171,8 @@
         sendBtn.onclick = function(){
           if(connected&&msg.value.length !== 0) {
             socket.emit('new message', {
-              message: msg.value
+              message: msg.value,
+              time: new Date().getTime()
             })
           }
         }

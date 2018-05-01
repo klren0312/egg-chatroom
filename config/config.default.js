@@ -25,7 +25,6 @@ module.exports = appInfo => {
     namespace: {
       '/': {
         connectionMiddleware: ['connection'],
-        packetMiddleware: ['filter'],
       }
     },
     redis: {

@@ -5,5 +5,7 @@
  */
 module.exports = app => {
   const { router, controller, io } = app;
-  io.of('/').route('new message', io.controller.chat.message)
+  const nsp = io.of('/')
+  nsp.route('new message', io.controller.chat.message)
+  nsp.route('old message', io.controller.chat.oldMessage)
 };
