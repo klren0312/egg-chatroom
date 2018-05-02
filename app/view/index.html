@@ -135,11 +135,6 @@
           })
         })
         connected = true
-        // 救命心跳
-        // setInterval(function(){
-        //   socket.emit('keep', '0')
-        // },8000)
-
         //监听
         socket.on('res', msg => {
           console.log(msg)

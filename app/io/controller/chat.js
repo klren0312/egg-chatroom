@@ -10,22 +10,24 @@ class ChatController extends Controller {
     const {ctx, app} = this
     const message = ctx.args[0] || {}
     let { roomId, username } = ctx.socket.handshake.query
-    console.log(new Date().getTime() -  message)
-    
-    // 将新数据推送给房间的所有人
-    app.io.to(roomId).emit('new message', {
-      data: message,
-      user: username
-    })
-    
-    // 将新数据推到redis
-    let data = {
-      user: username,
-      data: message,
-      date: new Date().toLocaleString()
-    }
-    app.redis.lpush(roomId, JSON.stringify(data))
-    app.redis.expire(roomId, 10*60 )
+    ctx.logger.info(new Date().getTime() -  message)
+    try {
+      // 将新数据推送给房间的所有人
+      app.io.to(roomId).emit('new message', {
+        data: message,
+        user: username
+      })     
+      // 将新数据推到redis
+      let data = {
+        user: username,
+        data: message,
+        date: new Date().toLocaleString()
+      }
+      app.redis.lpush(roomId, JSON.stringify(data))
+      app.redis.expire(roomId, 10*60 )  
+    } catch (error) {
+      ctx.logger.error(error)
+    } 
   }
   /**
    * 推送历史信息
