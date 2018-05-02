@@ -25,7 +25,7 @@ class ChatController extends Controller {
       date: new Date().toLocaleString()
     }
     app.redis.lpush(roomId, JSON.stringify(data))
-    
+    app.redis.expire(roomId, 10*60 )
   }
   /**
    * 推送历史信息
