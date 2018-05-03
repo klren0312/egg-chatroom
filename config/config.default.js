@@ -25,6 +25,9 @@ module.exports = appInfo => {
     namespace: {
       '/': {
         connectionMiddleware: ['connection'],
+      },
+      '/order': {
+        connectionMiddleware: ['orderConnect']
       }
     },
     redis: {

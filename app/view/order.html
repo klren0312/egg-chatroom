@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    .container {
+      display: flex;
+      justify-content: space-around;
+    }
+    .left {
+      display: flex;
+      flex: 2;
+      background: #d4d4d4;
+      flex-wrap: wrap;
+    }
+    .food-cart {
+      background: #4d4444;
+      margin-left: 20px;
+      height: 35%;
+    }
+    .right {
+      display: flex;
+      flex: 1;
+      background: #4d4444;
+      height: 20rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="left">
+      <div class="food-cart">
+        <h3 class="name">test1</h3>
+        <span class="price">￥1.1</span>
+        <button class="btn" click='buy(this)'>购买</button>
+      </div>
+      <div class="food-cart">
+        <h3 class="name">test2</h3>
+        <span class="price">￥2.2</span>
+        <button class="btn" click='buy(this)'>购买</button>
+      </div>
+      <div class="food-cart">
+        <h3 class="name">test2</h3>
+        <span class="price">￥2.2</span>
+        <button class="btn" click='buy(this)'>购买</button>
+      </div>
+      <div class="food-cart">
+        <h3 class="name">test2</h3>
+        <span class="price">￥2.2</span>
+        <button class="btn" click='buy(this)'>购买</button>
+      </div>
+    </div>
+    <div class="right">
+      <ul id="js-cart-list"></ul>
+    </div>
+  </div>
+  <script src="https://cdn.bootcss.com/socket.io/2.1.0/socket.io.js"></script>
+  <script>
+    const socket = io('http://localhost:7001/order',{
+      query:{
+        room: 'room1'
+      }
+    })
+    socket.on('connect', () => {
+      socket.on('online', msg => {
+        console.log(msg)
+      })
+    })
+  </script>
+</body>
+</html>
