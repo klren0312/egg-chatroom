@@ -19,9 +19,7 @@ module.exports = appInfo => {
   }
   // socket.io config
   config.io = {
-    init: {
-      wsEngine: 'uws'
-    },
+    init: {},
     namespace: {
       '/': {
         connectionMiddleware: ['connection'],
