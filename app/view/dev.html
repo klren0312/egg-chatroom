@@ -7,14 +7,19 @@
   <title>Document</title>
 </head>
 <body>
+  <script src="https://cdn.bootcss.com/vConsole/3.3.4/vconsole.min.js"></script>
   <script src="https://cdn.bootcss.com/socket.io/2.1.0/socket.io.js"></script>
   <script src="https://cdn.bootcss.com/moment.js/2.24.0/moment.min.js"></script>
   <script src="https://cdn.bootcss.com/moment.js/2.24.0/locale/zh-cn.js"></script>
   <script>
     console.log(`%c查看帮助:  help()`, 'color: #ddd;')
-    moment.locale('zh-cn')
+    var vConsole = new VConsole() // 初始化 vconsole
+    moment.locale('zh-cn') // 设置moment语言
     let socket, connected
     // 加入房间函数
+    function j (roomId, name) {
+      join(roomId, name)
+    }
     function join (roomId, name) {
       socket = io(window.location.origin ,{
         query:{
@@ -53,6 +58,9 @@
       })
     }
     // 发送消息
+    function s (msg) {
+      send(msg)
+    }
     function send (msg) {
       if (!socket) {
         console.log('请先加入房间')
@@ -65,11 +73,23 @@
         })
       }
     }
+    // 退出房间
+    function l () {
+      leave()
+    }
+    function leave () {
+      if (!socket) {
+        console.log('请先加入房间')
+        return
+      }
+      socket.close()
+    }
     // 帮助信息
     function help () {
       console.log('=========== ZZES Chat =============')
-      console.log(`进入房间:  %cjoin('房间名', '昵称')`, 'color: white; background-color: black;padding: 2px')
-      console.log(`发送消息:  %csend('信息')`, 'color: white; background-color: black;padding: 2px')
+      console.log(`进入房间:  %cjoin('房间名', '昵称') 或者 j('房间名', '昵称')`, 'color: white; background-color: black;padding: 2px')
+      console.log(`发送消息:  %csend('信息') 或者 s('信息')`, 'color: white; background-color: black;padding: 2px')
+      console.log(`退出房间:  %cleave() 或者 l()`, 'color: white; background-color: black;padding: 2px')
       console.log(`清除屏幕:  %cclear()`, 'color: white; background-color: black;padding: 2px')
       console.log(`查看帮助:  %chelp()`, 'color: white; background-color: black;padding: 2px')
       console.log('===================================')
