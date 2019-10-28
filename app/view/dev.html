@@ -29,7 +29,7 @@
         socket.on('old message', msg => {
           msg.map((v,i) => {
             let value = JSON.parse(v)
-            console.log(`${value.user}: ${value.data.message}——————${moment(value.date).fromNow()}`)
+            console.log(`${value.user}: ${value.data.message}  ---  ${moment(value.date).fromNow()}`)
           })
         })
         connected = true
@@ -42,7 +42,7 @@
         // 获取信息
         socket.on('new message', msg => {
           const { data, user } = msg
-          console.log(`${user}: ${data.message}——————${moment().fromNow()}`)
+          console.log(`${user}: ${data.message}  ---  ${moment().fromNow()}`)
         })
         socket.on('all user', msg => {
           console.log('当前在线用户数: ', msg.usernum)
