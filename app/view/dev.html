@@ -15,7 +15,7 @@
     let socket, connected
     // 加入房间函数
     function join (roomId, name) {
-      socket = io('http://localhost:7001/',{
+      socket = io(window.location.origin ,{
         query:{
           room: roomId,
           username: name

@@ -115,7 +115,7 @@
     }
     // 加入房间函数
     const join =async (roomId) => {
-      const socket = io('http://localhost:7001/',{
+      const socket = io(window.location.origin, {
         query:{
           room: roomId,
           username: localStorage.getItem('username')
