@@ -11,6 +11,7 @@
   <script src="https://cdn.bootcss.com/moment.js/2.24.0/moment.min.js"></script>
   <script src="https://cdn.bootcss.com/moment.js/2.24.0/locale/zh-cn.js"></script>
   <script>
+    console.log(`%c查看帮助:  help()`, 'color: #ddd;')
     moment.locale('zh-cn')
     let socket, connected
     // 加入房间函数
@@ -32,10 +33,7 @@
           })
         })
         connected = true
-        //监听
-        socket.on('res', msg => {
-          console.log(msg)
-        })
+
         // 当前系统用户进入与退出的信息
         socket.on('online', msg => {
           console.log(`系统通知: ${msg}`)
@@ -44,7 +42,7 @@
         // 获取信息
         socket.on('new message', msg => {
           const { data, user } = msg
-          console.log(`${user}: ${data.message}——————${moment(value.date).fromNow()}`)
+          console.log(`${user}: ${data.message}——————${moment().fromNow()}`)
         })
         socket.on('all user', msg => {
           console.log('当前在线用户数: ', msg.usernum)
@@ -66,6 +64,15 @@
           time: new Date().getTime()
         })
       }
+    }
+    // 帮助信息
+    function help () {
+      console.log('=========== ZZES Chat =============')
+      console.log(`进入房间:  %cjoin('房间名', '昵称')`, 'color: white; background-color: black;padding: 2px')
+      console.log(`发送消息:  %csend('信息')`, 'color: white; background-color: black;padding: 2px')
+      console.log(`清除屏幕:  %cclear()`, 'color: white; background-color: black;padding: 2px')
+      console.log(`查看帮助:  %chelp()`, 'color: white; background-color: black;padding: 2px')
+      console.log('===================================')
     }
   </script>
 </body>

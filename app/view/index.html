@@ -135,10 +135,6 @@
           })
         })
         connected = true
-        //监听
-        socket.on('res', msg => {
-          console.log(msg)
-        })
         // 当前系统用户进入与退出的信息
         socket.on('online', msg => {
           systemMsg.innerHTML = `系统通知: ${msg}`
