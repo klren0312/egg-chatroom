@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <script src="https://cdn.bootcss.com/socket.io/2.1.0/socket.io.js"></script>
+  <script src="https://cdn.bootcss.com/moment.js/2.24.0/moment.min.js"></script>
+  <script src="https://cdn.bootcss.com/moment.js/2.24.0/locale/zh-cn.js"></script>
+  <script>
+    moment.locale('zh-cn')
+    let socket, connected
+    // 加入房间函数
+    function join (roomId, name) {
+      socket = io('http://localhost:7001/',{
+        query:{
+          room: roomId,
+          username: name
+        }
+      })
+      socket.on('connect', () => {
+        // 请求历史信息
+        socket.emit('old message', 'need old')
+        // 获取历史信息
+        socket.on('old message', msg => {
+          msg.map((v,i) => {
+            let value = JSON.parse(v)
+            console.log(`${value.user}: ${value.data.message}——————${moment(value.date).fromNow()}`)
+          })
+        })
+        connected = true
+        //监听
+        socket.on('res', msg => {
+          console.log(msg)
+        })
+        // 当前系统用户进入与退出的信息
+        socket.on('online', msg => {
+          console.log(`系统通知: ${msg}`)
+        })
+        
+        // 获取信息
+        socket.on('new message', msg => {
+          const { data, user } = msg
+          console.log(`${user}: ${data.message}——————${moment(value.date).fromNow()}`)
+        })
+        socket.on('all user', msg => {
+          console.log('当前在线用户数: ', msg.usernum)
+        })
+        socket.on('disconnect', msg => {
+          console.log('断开连接')
+        });
+      })
+    }
+    // 发送消息
+    function send (msg) {
+      if (!socket) {
+        console.log('请先加入房间')
+        return
+      }
+      if(connected) {
+        socket.emit('new message', {
+          message: msg,
+          time: new Date().getTime()
+        })
+      }
+    }
+  </script>
+</body>
+</html>

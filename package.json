@@ -8,7 +8,7 @@
     "egg-redis": "^2.0.0",
     "egg-scripts": "^2.5.0",
     "egg-socket.io": "^4.0.8",
-    "uws": "^9.148.0"
+    "egg-view-nunjucks": "^2.2.0"
   },
   "devDependencies": {
     "autod": "^3.0.1",

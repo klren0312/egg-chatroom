@@ -30,6 +30,10 @@ module.exports = appInfo => {
       port: 6379,
     }
   }
+  // nunjucks
+  config.view = {
+    defaultViewEngine: 'nunjucks',
+  }
   // csrf
   config.security = {
     csrf: {
